@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,13 +15,30 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/test', function () {
+    return response()->json(['status' => 'working!']);
 });
 
-Route::get('/test',function(){
-    return response()->json(['status'=>'working!']);
-});
+$router->group(['prefix' => 'user'], function () use ($router) {
+    $router->post('/login', [UsersController::class, 'login']);
+    $router->post('/register', [UsersController::class, 'register']);
+    $router->get('/', [UsersController::class,'index']);
 
-Route::post('/user/register', [UserController::class,'registerUser']);
-Route::post('/user/login', [UserController::class,'loginUser']);
+    $router->get('/books', 'BooksController@index');
+    $router->get('/bookmark/{id}', 'KoleksiController@getByUser');
+    $router->post('/bookmark', 'KoleksiController@store');
+    $router->get('/rating/{id}', 'UlasanController@getByUser');
+    $router->post('/rating', 'UlasanController@store');
+    $router->get('/rent/{id}', 'PeminjamanController@getByUser');
+    $router->post('/rent', 'PeminjamanController@store');
+});
+// $router->group(['prefix' => 'staff'], function () use ($router) {
+//     $router->post('/login', 'UsersController@loginPetugas');
+
+//     $router->post('/book', 'BooksController@store');
+//     $router->post('/book/{id}', 'BooksController@getByID');
+//     $router->get('/book/{id}', 'BooksController@getByID');
+//     $router->get('/book', 'BooksController@index');
+//     $router->get('/kategori', 'KategoriController@index');
+//     $router->get('/pinjam', 'PeminjamanController@index');
+// });
