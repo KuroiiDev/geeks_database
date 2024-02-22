@@ -12,31 +12,33 @@ class BooksController extends Controller
      */
     public function index()
     {
-        $data = Books::with(['title'])->orderBy('created_at', 'DESC')->get();
+        $data = Books::orderBy('created_at', 'DESC')->get();
         if (!$data) {
-            return $this->jsonNotFoundResponse('not found!');
+            return response()->json(['status'=>'not found'],404);
         }
-        return $this->jsonSuccessResponse('success', $data);
+        return response()->json([
+            'status'=>'success',
+            'data'=> $data
+        ],200);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function store()
+    public function store(Request $request)
     {
         try {
-            $body = $this->parseRequestBody();
-            $data = [
-                'title' => $body['title'],
-                'writer' => $body['writer'],
-                'publisher' => $body['publisher'],
-                'synopsis' => $body['synopsis'],
-                'publish_year' => $body['publish_year'],
-            ];
+            $data = $request->validate([
+                'title' => 'required',
+                'writer' => 'required',
+                'publisher' => 'required',
+                'synopsis' => 'required',
+                'publish_year' => 'required',
+            ]);
             $add = Books::create($data);
-            return $this->jsonCreatedResponse('success', $add);
+            return response()->json(['status'=> 'success','data'=> $add],201);
         } catch (\Throwable $e) {
-            return $this->jsonErrorResponse('internal server error ' . $e->getMessage());
+            return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
         }
     }
 

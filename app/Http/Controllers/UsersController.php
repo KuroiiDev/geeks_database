@@ -12,20 +12,21 @@ class UsersController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function register()
+    public function register(Request $request)
     {
         try {
-            $body = $this->parseRequestBody();
-            $data = [
-                'name' => $body['name'],
-                'email' => $body['email'],
-                'role' => 'USER',
-                'password' => Hash::make($body['password']),
-            ];
-            $occupant = Users::create($data);
-            return $this->jsonCreatedResponse('success', $occupant);
+            $data = $request->validate([
+                'name' => 'required',
+                'email' => 'required',
+                'password' => 'required',
+            ]);
+            $user = Users::create($data);
+            return response()->json([
+                'status'=> 'success',
+                'data'=> '',
+            ]);
         } catch (\Throwable $e) {
-            return $this->jsonErrorResponse('internal server error ' . $e->getMessage());
+            return response()->json(['error'=> $e->getMessage()],0);
         }
     }
 
