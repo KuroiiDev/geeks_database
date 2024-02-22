@@ -41,7 +41,7 @@ class BooksController extends Controller
             return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
         }
     }
-
+/*
     public function getByID($id)
     {
         try {
@@ -57,4 +57,5 @@ class BooksController extends Controller
             return $this->jsonErrorResponse('internal server error ' . $e->getMessage());
         }
     }
+*/
 }

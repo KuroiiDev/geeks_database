@@ -23,35 +23,52 @@ class UsersController extends Controller
             $user = Users::create($data);
             return response()->json([
                 'status'=> 'success',
-                'data'=> '',
-            ]);
+                'data'=> $user,
+            ],201);
         } catch (\Throwable $e) {
-            return response()->json(['error'=> $e->getMessage()],0);
+            return response()->json([
+                'status'=> 'failed',
+                'message'=> $e->getMessage()
+            ],500);
         }
     }
 
-    public function login()
+    public function login(Request $request)
     {
         try {
-            $email = $this->postField('email');
-            $password = $this->postField('password');
+            $data = $request->validate([
+                'email'=>'required',
+                'password'=>'required'
+            ]);
 
             $user = Users::with([])
-                ->where('email', '=', $email)
+                ->where('email', '=', $data['email'])
                 ->where('role', '=', 'USER')
                 ->first();
             if (!$user) {
-                return $this->jsonNotFoundResponse('user not found');
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'User Not Found'
+                ],401);
             }
 
-            $isPasswordValid = Hash::check($password, $user->password);
+            $isPasswordValid = Hash::check($data['password'], $user->password);
             if (!$isPasswordValid) {
-                return $this->jsonUnauthorizedResponse('password did not match');
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Password Not Match'
+                ],401);
             }
 
-            return $this->jsonSuccessResponse('Login Success',$user);
+            return response()->json([
+                'status' => 'success',
+                'data' => $user
+            ],200);
         }catch (\Throwable $e) {
-            return $this->jsonErrorResponse('internal server error '.$e->getMessage());
+            return response()->json([
+                'status' => 'failed',
+                    'message' => $e->getMessage()
+            ],500);
         }
     }
 
@@ -66,17 +83,29 @@ class UsersController extends Controller
                 ->where('role', '!=', 'USER')
                 ->first();
             if (!$user) {
-                return $this->jsonNotFoundResponse('user not found');
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Account Not Found'
+                ],401);
             }
 
             $isPasswordValid = Hash::check($password, $user->password);
             if (!$isPasswordValid) {
-                return $this->jsonUnauthorizedResponse('password did not match');
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Password Not Match'
+                ],401);
             }
 
-            return $this->jsonSuccessResponse('Login Success',$user);
+            return response()->json([
+                'status' => 'success',
+                'data' => $user
+            ],200);
         }catch (\Throwable $e) {
-            return $this->jsonErrorResponse('internal server error '.$e->getMessage());
+            return response()->json([
+                'status' => 'failed',
+                    'message' => $e->getMessage()
+            ],500);
         }
     }
 
