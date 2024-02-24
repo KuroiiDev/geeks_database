@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('book_id');
             $table->dateTime('rent_date');
             $table->dateTime('return_date');
-            $table->enum('status', ['RENTED', 'BOOKED', 'LATE'])->nullable()->default('RENTED');
+            $table->enum('status', ['RENTED', 'BOOKED', 'LATE', 'RETURNED'])->nullable()->default('RENTED');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('book_id')->references('id')->on('books');

@@ -19,7 +19,10 @@ class UsersController extends Controller
                 'name' => 'required',
                 'email' => 'required',
                 'password' => 'required',
+                'role' => 'nullable',
             ]);
+            $data['role'] = 'USER';
+            $data['password'] = Hash::make($data['password']);
             $user = Users::create($data);
             return response()->json([
                 'status'=> 'success',
@@ -72,14 +75,40 @@ class UsersController extends Controller
         }
     }
 
-    public function staffLogin()
+    public function staffRegister(Request $request)
     {
         try {
-            $email = $this->postField('email');
-            $password = $this->postField('password');
+            $data = $request->validate([
+                'name' => 'required',
+                'email' => 'required',
+                'password' => 'required',
+                'role' => 'nullable',
+            ]);
+            $data['role'] = 'STAFF';
+            $data['password'] = Hash::make($data['password']);
+            $user = Users::create($data);
+            return response()->json([
+                'status'=> 'success',
+                'data'=> $user,
+            ],201);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'=> 'failed',
+                'message'=> $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function staffLogin(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'email'=>'required',
+                'password'=>'required'
+            ]);
 
             $user = Users::with([])
-                ->where('email', '=', $email)
+                ->where('email', '=', $data['email'])
                 ->where('role', '!=', 'USER')
                 ->first();
             if (!$user) {
@@ -89,7 +118,7 @@ class UsersController extends Controller
                 ],401);
             }
 
-            $isPasswordValid = Hash::check($password, $user->password);
+            $isPasswordValid = Hash::check($data['password'], $user->password);
             if (!$isPasswordValid) {
                 return response()->json([
                     'status' => 'failed',
@@ -108,6 +137,28 @@ class UsersController extends Controller
             ],500);
         }
     }
-
+    public function adminRegister(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'name' => 'required',
+                'email' => 'required',
+                'password' => 'required',
+                'role' => 'nullable',
+            ]);
+            $data['role'] = 'ADMIN';
+            $data['password'] = Hash::make($data['password']);
+            $user = Users::create($data);
+            return response()->json([
+                'status'=> 'success',
+                'data'=> $user,
+            ],201);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'=> 'failed',
+                'message'=> $e->getMessage()
+            ],500);
+        }
+    }
     
 }
