@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BooksController;
+use App\Http\Controllers\GenresController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -45,7 +46,8 @@ $router->group(['prefix' => 'staff'], function () use ($router) {
 //     $router->get('/book/{id}', 'BooksController@getByID');
      $router->get('/book', [BooksController::class,'index']);
 
-//     $router->get('/kategori', 'KategoriController@index');
+     $router->get('/genre', [GenresController::class,'index']);
+
 //     $router->get('/pinjam', 'PeminjamanController@index');
 });
 
@@ -56,10 +58,9 @@ $router->group(['prefix' => 'admin'], function () use ($router) {
     $router->post('/registerStaff', [UsersController::class, 'staffRegister']);
 
     $router->post('/book', [BooksController::class,'store']);
-//     $router->post('/book/{id}', 'BooksController@getByID');
-//     $router->get('/book/{id}', 'BooksController@getByID');
+
     $router->get('/book', [BooksController::class,'index']);
 
-//     $router->get('/kategori', 'KategoriController@index');
-//     $router->get('/pinjam', 'PeminjamanController@index');
+    $router->get('/genre', [GenresController::class,'index']);
+     $router->post('/genre', [GenresController::class,'store']);
 });

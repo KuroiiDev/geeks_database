@@ -12,23 +12,28 @@ class GenresController extends Controller
      */
     public function index()
     {
-        //
+        $data = Genres::orderBy('id', 'ASC')->get();
+        if (!$data) {
+            return response()->json(['status'=>'not found'],404);
+        }
+        return response()->json([
+            'status'=>'success',
+            'data'=> $data
+        ],200);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        try 
+        {
+            $data = $request->validate(['genre' => 'required']);
+            $add = Genres::create($data);
+            return response()->json(['status'=> 'success','data'=> $add],201);
+        } catch (\Throwable $e) {
+            return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
+        }
     }
 
     /**
