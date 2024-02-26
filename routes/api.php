@@ -42,7 +42,7 @@ $router->group(['prefix' => 'staff'], function () use ($router) {
      $router->post('/login', [UsersController::class, 'staffLogin']);
 
      $router->post('/book', [BooksController::class,'store']);
-//     $router->post('/book/{id}', 'BooksController@getByID');
+     $router->get('/book/{id}', [BooksController::class, 'getByID']);
 //     $router->get('/book/{id}', 'BooksController@getByID');
      $router->get('/book', [BooksController::class,'index']);
 
@@ -56,6 +56,8 @@ $router->group(['prefix' => 'admin'], function () use ($router) {
     $router->post('/login', [UsersController::class, 'staffLogin']);
     $router->post('/register', [UsersController::class, 'adminRegister']);
     $router->post('/registerStaff', [UsersController::class, 'staffRegister']);
+    $router->get('/users', [UsersController::class, 'indexUser']);
+    $router->get('/staffs', [UsersController::class, 'indexStaff']);
 
     $router->post('/book', [BooksController::class,'store']);
 
