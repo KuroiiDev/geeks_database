@@ -25,9 +25,9 @@ $router->group(['prefix' => 'user'], function () use ($router) {
 
     $router->post('/login', [UsersController::class, 'login']);
     $router->post('/register', [UsersController::class, 'register']);
-    $router->get('/', [UsersController::class,'index']);
 
-    $router->get('/books', [BooksController::class,'index']);
+    $router->get('/book', [BooksController::class,'index']);
+    $router->get('/book/{id}', [BooksController::class, 'getByID']);
     //$router->get('/bookmark/{id}', 'KoleksiController@getByUser');
     //$router->post('/bookmark', 'KoleksiController@store');
 
@@ -43,7 +43,7 @@ $router->group(['prefix' => 'staff'], function () use ($router) {
 
      $router->post('/book', [BooksController::class,'store']);
      $router->get('/book/{id}', [BooksController::class, 'getByID']);
-//     $router->get('/book/{id}', 'BooksController@getByID');
+     $router->patch('/book/{id}', [BooksController::class, 'update']);
      $router->get('/book', [BooksController::class,'index']);
 
      $router->get('/genre', [GenresController::class,'index']);

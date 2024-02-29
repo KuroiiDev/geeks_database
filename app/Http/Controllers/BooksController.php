@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Books;
+use Exception;
 use Illuminate\Http\Request;
 
 class BooksController extends Controller
@@ -60,6 +61,27 @@ class BooksController extends Controller
             ],200);
         } catch (\Throwable $e) {
             return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $data = $request->validate([
+                'title' => 'string',
+                'writer' => 'string',
+                'publisher' => 'string',
+                'synopsis' => 'string',
+                'publish_year' => 'integer',
+            ]);
+            Books::where('id', $id)->update($data);
+            $update = Books::where('id', '=', $id)->first();
+            return response()->json([
+                'status' => 'success',
+                'data' => $update
+            ],200);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e],500);
         }
     }
 }
