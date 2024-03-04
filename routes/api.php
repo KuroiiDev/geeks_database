@@ -45,6 +45,7 @@ $router->group(['prefix' => 'staff'], function () use ($router) {
      $router->get('/book/{id}', [BooksController::class, 'getByID']);
      $router->patch('/book/{id}', [BooksController::class, 'update']);
      $router->get('/book', [BooksController::class,'index']);
+     $router->get('/bookAZ', [BooksController::class,'AZ']);
 
      $router->get('/genre', [GenresController::class,'index']);
 

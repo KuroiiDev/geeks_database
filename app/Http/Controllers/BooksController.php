@@ -23,6 +23,18 @@ class BooksController extends Controller
         ],200);
     }
 
+    public function AZ()
+    {
+        $data = Books::orderBy('title', 'ASC')->get();
+        if (!$data) {
+            return response()->json(['status'=>'not found'],404);
+        }
+        return response()->json([
+            'status'=>'success',
+            'data'=> $data
+        ],200);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
