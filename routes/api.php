@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BooksController;
 use App\Http\Controllers\GenresController;
+use App\Http\Controllers\RentsController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,30 +27,37 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     $router->post('/login', [UsersController::class, 'login']);
     $router->post('/register', [UsersController::class, 'register']);
 
-    $router->get('/book', [BooksController::class,'index']);
-    $router->get('/book/{id}', [BooksController::class, 'getByID']);
+    $router->group(['prefix' => 'book'], function () use ($router) {
+        $router->get('/', [BooksController::class,'index']);
+        $router->get('/id/{id}', [BooksController::class, 'getByID']);
+        $router->get('/az', [BooksController::class,'orderAtoZ']);
+        $router->get('/top', [BooksController::class,'topRent']);
+    });
+
+    $router->group(['prefix' => 'rent'], function () use ($router) {
+        $router->post('/request', [RentsController::class,'requestRent']);
+        $router->get('/return/{id}', [RentsController::class,'returnRent']);
+    });
+
     //$router->get('/bookmark/{id}', 'KoleksiController@getByUser');
     //$router->post('/bookmark', 'KoleksiController@store');
 
     //$router->get('/rating/{id}', 'UlasanController@getByUser');
     //$router->post('/rating', 'UlasanController@store');
-    
-    //$router->get('/rent/{id}', 'PeminjamanController@getByUser');
-    //$router->post('/rent', 'PeminjamanController@store');
+
 });
 $router->group(['prefix' => 'staff'], function () use ($router) {
 
      $router->post('/login', [UsersController::class, 'staffLogin']);
 
      $router->post('/book', [BooksController::class,'store']);
-     $router->get('/book/{id}', [BooksController::class, 'getByID']);
-     $router->patch('/book/{id}', [BooksController::class, 'update']);
+     $router->get('/book/id/{id}', [BooksController::class, 'getByID']);
+     $router->patch('/book/id/{id}', [BooksController::class, 'update']);
      $router->get('/book', [BooksController::class,'index']);
-     $router->get('/bookAZ', [BooksController::class,'AZ']);
+
+     $router->get('/rent', [RentsController::class,'index']);
 
      $router->get('/genre', [GenresController::class,'index']);
-
-//     $router->get('/pinjam', 'PeminjamanController@index');
 });
 
 $router->group(['prefix' => 'admin'], function () use ($router) {

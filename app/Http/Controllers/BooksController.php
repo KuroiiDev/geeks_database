@@ -23,9 +23,21 @@ class BooksController extends Controller
         ],200);
     }
 
-    public function AZ()
+    public function orderAtoZ()
     {
         $data = Books::orderBy('title', 'ASC')->get();
+        if (!$data) {
+            return response()->json(['status'=>'not found'],404);
+        }
+        return response()->json([
+            'status'=>'success',
+            'data'=> $data
+        ],200);
+    }
+
+    public function topRent()
+    {
+        $data = Books::orderBy('rented', 'DESC')->first();
         if (!$data) {
             return response()->json(['status'=>'not found'],404);
         }
@@ -60,7 +72,7 @@ class BooksController extends Controller
         try {
             $data = Books::with([])->where('id', '=', $id)->first();
             if (!$data) {
-                return response()->json(['status'=>'not found'],404);
+                return response()->json(['status'=>'id not found'],404);
             }
             /*
             if ($this->request->method() === 'POST') {

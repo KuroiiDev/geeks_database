@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('writer')->nullable();
             $table->string('publisher')->nullable();
             $table->text('synopsis')->nullable();
+            $table->integer('rented')->default(0);
+            $table->enum('status', ['AVAILABLE', 'UNAVAILABLE'])->nullable()->default('AVAILABLE');
             $table->integer('publish_year')->unsigned()->nullable();
             $table->timestamps();
         });
