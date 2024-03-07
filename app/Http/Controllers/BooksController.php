@@ -67,7 +67,7 @@ class BooksController extends Controller
         }
     }
 
-    public function getByID($id)
+    public function byID($id)
     {
         try {
             $data = Books::with([])->where('id', '=', $id)->first();

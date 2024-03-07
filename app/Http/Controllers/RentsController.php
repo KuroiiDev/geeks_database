@@ -6,6 +6,7 @@ use App\Models\Books;
 use App\Models\Rents;
 use App\Models\Users;
 use Illuminate\Http\Request;
+use Exception;
 
 class RentsController extends Controller
 {
@@ -22,6 +23,22 @@ class RentsController extends Controller
             'status'=>'success',
             'data'=> $data
         ],200);
+    }
+
+    public function byId($id)
+    {
+        try {
+            $data = Rents::with([])->where('user_id', '=', $id)->get();
+            if (!$data) {
+            return response()->json(['status'=>'not found'],404);
+            }
+            return response()->json([
+                'status'=>'success',
+                'data'=> $data
+            ],200);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
+        }
     }
 
     /**
@@ -60,6 +77,16 @@ class RentsController extends Controller
             Rents::where('id', $id)->update(['status' => 'RETURNED']);
             $rent = Rents::with([])->where('id', $id)->first();
             Books::where('id', $rent['book_id'])->update(['status'=>'AVAILABLE']);
+            return response()->json(['status'=> 'success','data'=> $rent],201);
+        }catch (\Throwable $e) {
+            return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
+        }
+    }
+
+    public function verifyRent($id){
+        try {
+            Rents::where('id', $id)->update(['status' => 'RENTED']);
+            $rent = Rents::with([])->where('id', $id)->first();
             return response()->json(['status'=> 'success','data'=> $rent],201);
         }catch (\Throwable $e) {
             return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
