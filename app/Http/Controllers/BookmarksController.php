@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bookmarks;
+use Exception;
 use Illuminate\Http\Request;
 
 class BookmarksController extends Controller
@@ -10,9 +11,17 @@ class BookmarksController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($id)
     {
-        //
+        try {
+            $data = Bookmarks::with(['user', 'book'])->where('user_id',$id)->get();
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ],200);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
+        }
     }
 
     /**
@@ -28,7 +37,19 @@ class BookmarksController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try{
+            $data = $request->validate([
+                'book_id' => 'required',
+                'user_id' => 'required'
+            ]);
+            $bookmark = Bookmarks::create($data);
+            return response()->json([
+                'status' => 'success',
+                'data' => $bookmark
+            ],201);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e],500);
+        }
     }
 
     /**
@@ -58,8 +79,16 @@ class BookmarksController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Bookmarks $bookmarks)
+    public function destroy($id)
     {
-        //
+        try{
+            $data = Bookmarks::where('bookmark_id', $id)->delete();
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ],200);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e],500);
+        }
     }
 }

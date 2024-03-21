@@ -52,18 +52,18 @@ class RentsController extends Controller
                 'book_id' => 'required',
                 'return_date' => 'required',
             ]);
-            $book = Books::with([])->where('id', '=', $data['book_id'])->first();
+            $book = Books::with([])->where('book_id', '=', $data['book_id'])->first();
             if ($book['status'] == "UNAVAILABLE"){
                 return response()->json(['status'=> 'error','message'=> 'Book Unavailable!'],400);
             } else{
                 $add = Rents::create($data);
                 $rented = ['rented'=> $book['rented']+1, 'status'=>'UNAVAILABLE'];
-                Books::where('id', $data['book_id'])->update($rented);
+                Books::where('book_id', $data['book_id'])->update($rented);
                 return response()->json([
                     'status'=> 'success',
                     'data'=> [
-                        'book' => Books::with([])->where('id', '=', $data['book_id'])->first(),
-                        'user' => Users::with([])->where('id', '=', $data['user_id'])->first()
+                        'book' => Books::with([])->where('book_id', '=', $data['book_id'])->first(),
+                        'user' => Users::with([])->where('book_id', '=', $data['user_id'])->first()
                     ]
                 ],201);
             }
@@ -75,7 +75,7 @@ class RentsController extends Controller
     public function returnRent($id){
         try {
             Rents::where('id', $id)->update(['status' => 'RETURNED']);
-            $rent = Rents::with([])->where('id', $id)->first();
+            $rent = Rents::with(['book_id', 'user_id'])->where('rent_id', $id)->first();
             Books::where('id', $rent['book_id'])->update(['status'=>'AVAILABLE']);
             return response()->json(['status'=> 'success','data'=> $rent],201);
         }catch (\Throwable $e) {
@@ -86,7 +86,7 @@ class RentsController extends Controller
     public function verifyRent($id){
         try {
             Rents::where('id', $id)->update(['status' => 'RENTED']);
-            $rent = Rents::with([])->where('id', $id)->first();
+            $rent = Rents::with(['book_id', 'user_id'])->where('rent_id', $id)->first();
             return response()->json(['status'=> 'success','data'=> $rent],201);
         }catch (\Throwable $e) {
             return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);

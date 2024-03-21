@@ -59,7 +59,19 @@ class BooksController extends Controller
                 'publisher' => 'required',
                 'synopsis' => 'required',
                 'publish_year' => 'required',
+                'cover' => 'nullable'
             ]);
+            if ($request->hasFile('cover')) {
+                if($request->file('cover')->isValid()) {
+                    try {
+                        $file = $request->file('cover');
+                        $image = base64_encode(file_get_contents($file));
+                        $data['cover'] = $image;
+                    }catch (\Throwable $e) {
+                        return response()->json(['status'=> 'error Encoding','message'=> $e->getMessage()],500);
+                    }
+                }
+            }
             $add = Books::create($data);
             return response()->json(['status'=> 'success','data'=> $add],201);
         } catch (\Throwable $e) {
@@ -70,7 +82,7 @@ class BooksController extends Controller
     public function byID($id)
     {
         try {
-            $data = Books::with([])->where('id', '=', $id)->first();
+            $data = Books::with([])->where('book_id', '=', $id)->first();
             if (!$data) {
                 return response()->json(['status'=>'id not found'],404);
             }
@@ -99,7 +111,7 @@ class BooksController extends Controller
                 'publish_year' => 'integer',
             ]);
             Books::where('id', $id)->update($data);
-            $update = Books::where('id', '=', $id)->first();
+            $update = Books::where('book_id', '=', $id)->first();
             return response()->json([
                 'status' => 'success',
                 'data' => $update

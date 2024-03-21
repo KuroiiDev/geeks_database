@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bookmarks', function (Blueprint $table) {
-            $table->id();
+            $table->id('bookmark_id');
             $table->foreignId('user_id');
             $table->foreignId('book_id');
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('book_id')->references('id')->on('books');
+            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('book_id')->references('book_id')->on('books');
         });
     }
 

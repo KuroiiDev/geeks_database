@@ -13,6 +13,9 @@ class Books extends Model
         'writer',
         'publisher',
         'synopsis',
-        'publish_year'
+        'publish_year',
+        'rented',
+        'status',
+        'cover'
     ];
 }

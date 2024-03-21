@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Bookmarks extends Model
 {
@@ -14,12 +15,12 @@ class Bookmarks extends Model
         'book_id',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(Users::class, 'user_id');
     }
 
-    public function book()
+    public function book(): BelongsTo
     {
         return $this->belongsTo(Books::class, 'book_id');
     }

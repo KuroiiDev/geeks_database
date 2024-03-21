@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookmarksController;
 use App\Http\Controllers\BooksController;
 use App\Http\Controllers\GenresController;
 use App\Http\Controllers\RentsController;
@@ -41,11 +42,11 @@ $router->group(['prefix' => 'user'], function () use ($router) {
         $router->get('/return/{id}', [RentsController::class,'returnRent']);
     });
 
-    //$router->get('/bookmark/{id}', 'KoleksiController@getByUser');
-    //$router->post('/bookmark', 'KoleksiController@store');
-
-    //$router->get('/rating/{id}', 'UlasanController@getByUser');
-    //$router->post('/rating', 'UlasanController@store');
+    $router->group(['prefix' => 'bookmark'], function () use ($router) {
+        $router->get('/user/{id}', [BookmarksController::class,'index']);
+        $router->post('/add', [BookmarksController::class,'store']);
+        $router->get('/remove/{id}', [BookmarksController::class,'store']);
+    });
 
 });
 $router->group(['prefix' => 'staff'], function () use ($router) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ratings;
+use Exception;
 use Illuminate\Http\Request;
 
 class RatingsController extends Controller
@@ -12,7 +13,21 @@ class RatingsController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $data = Ratings::with(['users', 'books'])->orderBy('created_at', 'DESC')->get();
+            if (!$data) {
+                return response()->json(['status' => 'not found'], 404);
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => "Internal server error",
+                'message' => $e
+            ], 500);
+        }
     }
 
     /**
@@ -28,15 +43,40 @@ class RatingsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $data = $request->validate([
+                'user_id' => 'required',
+                'book_id' => 'required',
+                'review' => 'required',
+                'rating' => 'required',
+            ]);
+            $rating = Ratings::create($data);
+            return response()->json([
+                'status' => 'success',
+                'data' => $rating
+            ],201);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e],500);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Ratings $ratings)
+    public function show($id)
     {
-        //
+        try{
+            $data = Ratings::all()->find($id);
+            if (!$data) {
+                return response()->json(['status' => 'not found'], 404);
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e],500);
+        }
     }
 
     /**
@@ -44,7 +84,7 @@ class RatingsController extends Controller
      */
     public function edit(Ratings $ratings)
     {
-        //
+        
     }
 
     /**
