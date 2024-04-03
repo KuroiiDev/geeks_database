@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rents', function (Blueprint $table) {
-            $table->id('rent_id');
+            $table->id();
             $table->foreignId('user_id');
             $table->foreignId('book_id');
             $table->dateTime('rent_date')->nullable();
             $table->dateTime('return_date');
             $table->enum('status', ['RENTED', 'BOOKED', 'LATE', 'RETURNED'])->nullable()->default('BOOKED');
             $table->timestamps();
-            $table->foreign('user_id')->references('user_id')->on('users');
-            $table->foreign('book_id')->references('book_id')->on('books');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('book_id')->references('id')->on('books');
         });
     }
 

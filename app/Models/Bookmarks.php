@@ -17,11 +17,11 @@ class Bookmarks extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(Users::class, 'user_id');
+        return $this->belongsTo(Users::class, 'user_id', 'id');
     }
 
     public function book(): BelongsTo
     {
-        return $this->belongsTo(Books::class, 'book_id');
+        return $this->belongsTo(Books::class, 'book_id', 'id');
     }
 }

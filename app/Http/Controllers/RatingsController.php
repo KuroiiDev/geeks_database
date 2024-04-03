@@ -14,7 +14,7 @@ class RatingsController extends Controller
     public function index()
     {
         try {
-            $data = Ratings::with(['users', 'books'])->orderBy('created_at', 'DESC')->get();
+            $data = Ratings::with(['user', 'book'])->orderBy('created_at', 'DESC')->get();
             if (!$data) {
                 return response()->json(['status' => 'not found'], 404);
             }

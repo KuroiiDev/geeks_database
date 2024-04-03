@@ -82,7 +82,7 @@ class BooksController extends Controller
     public function byID($id)
     {
         try {
-            $data = Books::with([])->where('book_id', '=', $id)->first();
+            $data = Books::with([])->where('id', '=', $id)->first();
             if (!$data) {
                 return response()->json(['status'=>'id not found'],404);
             }
@@ -111,7 +111,7 @@ class BooksController extends Controller
                 'publish_year' => 'integer',
             ]);
             Books::where('id', $id)->update($data);
-            $update = Books::where('book_id', '=', $id)->first();
+            $update = Books::where('id', '=', $id)->first();
             return response()->json([
                 'status' => 'success',
                 'data' => $update

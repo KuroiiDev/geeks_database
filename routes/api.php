@@ -27,6 +27,7 @@ $router->group(['prefix' => 'user'], function () use ($router) {
 
     $router->post('/login', [UsersController::class, 'login']);
     $router->post('/register', [UsersController::class, 'register']);
+    $router->get('/id/{id}', [UsersController::class, 'userId']);
 
     $router->group(['prefix' => 'book'], function () use ($router) {
         $router->get('/', [BooksController::class,'index']);
@@ -39,6 +40,7 @@ $router->group(['prefix' => 'user'], function () use ($router) {
         $router->post('/request', [RentsController::class,'requestRent']);
 
         $router->get('/id/{id}', [RentsController::class,'byId']);
+        $router->get('/user/{id}', [RentsController::class,'byUser']);
         $router->get('/return/{id}', [RentsController::class,'returnRent']);
     });
 

@@ -12,7 +12,27 @@ class UsersController extends Controller
     {
         try
         {
-            $data = Users::orderBy('user_id', 'ASC')->where('role', '=', 'USER')->get();
+            $data = Users::orderBy('id', 'ASC')->where('role', '=', 'USER')->get();
+        if (!$data) {
+            return response()->json(['status'=>'not found'],404);
+        }
+        return response()->json([
+            'status'=>'success',
+            'data'=> $data
+        ],200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'=> 'failed',
+                'message'=> $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function userId($id)
+    {
+        try
+        {
+            $data = Users::orderBy('id', 'ASC')->where('id', '=', $id)->first();
         if (!$data) {
             return response()->json(['status'=>'not found'],404);
         }
@@ -32,7 +52,7 @@ class UsersController extends Controller
     {
         try
         {
-            $data = Users::orderBy('user_id', 'ASC')->where('role', '=', 'STAFF')->get();
+            $data = Users::orderBy('id', 'ASC')->where('role', '=', 'STAFF')->get();
         if (!$data) {
             return response()->json(['status'=>'not found'],404);
         }
