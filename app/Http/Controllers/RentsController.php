@@ -28,7 +28,6 @@ class RentsController extends Controller
     public function byId($id)
     {
         try {
-            //$data1 = Rents::where('id', '=', $id)->first();
             $data = Rents::where('id', $id)->with(['book','user'])->first();
             if (!$data) {
             return response()->json(['status'=>'not found'],404);
@@ -45,7 +44,7 @@ class RentsController extends Controller
     public function byUser($id)
     {
         try {
-            $data = Rents::where('user_id', $id)->with(['book','user'])->get();
+            $data = Rents::where('user_id', $id)->with(['book','user'])->orderBy('created_at', 'DESC')->get();
             if (!$data) {
             return response()->json(['status'=>'not found'],404);
             }
