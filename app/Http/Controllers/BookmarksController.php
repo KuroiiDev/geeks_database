@@ -14,7 +14,7 @@ class BookmarksController extends Controller
     public function index($id)
     {
         try {
-            $data = Bookmarks::with(['user', 'book'])->where('user_id',$id)->get();
+            $data = Bookmarks::where('user_id',$id)->with(['user', 'book'])->get();
             return response()->json([
                 'status' => 'success',
                 'data' => $data

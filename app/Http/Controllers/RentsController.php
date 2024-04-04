@@ -6,6 +6,7 @@ use App\Models\Books;
 use App\Models\Rents;
 use App\Models\Users;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Exception;
 
 class RentsController extends Controller
@@ -41,6 +42,22 @@ class RentsController extends Controller
         }
     }   
 
+    public function current($id)
+    {
+        try {
+            $data = Rents::where('user_id', $id)->where('status', ['BOOKED', 'RENTED'])->with(['book','user'])->orderBy('created_at', 'DESC')->first();
+            if (!$data) {
+            return response()->json(['status'=>'not found'],404);
+            }
+            return response()->json([
+                'status'=>'success',
+                'data'=> $data
+            ],200);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
+        }
+    }
+
     public function byUser($id)
     {
         try {
@@ -71,8 +88,14 @@ class RentsController extends Controller
             ]);
             $book = Books::with([])->where('id', '=', $data['book_id'])->first();
             if ($book['status'] == "UNAVAILABLE"){
+
                 return response()->json(['status'=> 'error','message'=> 'Book Unavailable!'],400);
-            } else{
+
+            } else if(Rents::where('user_id', $data['user_id'])->where('status', ['BOOKED', 'RENTED'])){
+
+                return response()->json(['status'=> 'error','message'=> 'User Can Only Rent 1 Book Each Time!'],400);
+
+            }else {
                 $rent = Rents::create($data);
                 $rented = ['rented'=> $book['rented']+1, 'status'=>'UNAVAILABLE'];
                 Books::where('id', $data['book_id'])->update($rented);
@@ -109,9 +132,10 @@ class RentsController extends Controller
 
     public function verifyRent($id){
         try {
-            if (Rents::where('id', $id)->first()['status'] != 'RETURNED' || Rents::where('id', $id)->first()['status'] != 'RENTED') {
+            if (Rents::where('id', $id)->first()['status'] != 'RETURNED' && Rents::where('id', $id)->first()['status'] != 'RENTED') {
 
-                Rents::where('id', $id)->update(['status' => 'RENTED']);
+                $today = Carbon::now()->format('Y-m-d');
+                Rents::where('id', $id)->update(['status' => 'RENTED', 'rent_date'=> $today]);
                 $rent = Rents::where('id', $id)->with(['book', 'user'])->first();
                 return response()->json(['status'=> 'success','data'=> $rent],201);
             } else {

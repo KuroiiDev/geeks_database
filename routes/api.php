@@ -41,6 +41,7 @@ $router->group(['prefix' => 'user'], function () use ($router) {
 
         $router->get('/id/{id}', [RentsController::class,'byId']);
         $router->get('/user/{id}', [RentsController::class,'byUser']);
+        $router->get('/current/{id}', [RentsController::class,'current']);
         $router->get('/return/{id}', [RentsController::class,'returnRent']);
     });
 
