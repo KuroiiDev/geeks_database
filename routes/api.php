@@ -3,6 +3,7 @@
 use App\Http\Controllers\BookmarksController;
 use App\Http\Controllers\BooksController;
 use App\Http\Controllers\GenresController;
+use App\Http\Controllers\RatingsController;
 use App\Http\Controllers\RentsController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
@@ -48,9 +49,14 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     $router->group(['prefix' => 'bookmark'], function () use ($router) {
         $router->get('/user/{id}', [BookmarksController::class,'index']);
         $router->post('/add', [BookmarksController::class,'store']);
-        $router->get('/remove/{id}', [BookmarksController::class,'store']);
+        $router->post('/check', [BookmarksController::class,'check']);
+        $router->get('/remove/{id}', [BookmarksController::class,'destroy']);
     });
 
+    $router->group(['prefix' => 'rating'], function () use ($router) {
+        $router->get('/', [RatingsController::class,'index']);
+    });
+ 
 });
 $router->group(['prefix' => 'staff'], function () use ($router) {
 

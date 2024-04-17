@@ -15,6 +15,9 @@ class BookmarksController extends Controller
     {
         try {
             $data = Bookmarks::where('user_id',$id)->with(['user', 'book'])->get();
+            if ($data->count() <=0) {
+                return response()->json(['status' => 'not found'], 203);
+            }
             return response()->json([
                 'status' => 'success',
                 'data' => $data
@@ -42,11 +45,32 @@ class BookmarksController extends Controller
                 'book_id' => 'required',
                 'user_id' => 'required'
             ]);
+            $validate = Bookmarks::where('user_id',$data['user_id'])->where('book_id',$data['book_id'])->get();
+            if ($validate->count() > 0){
+                return response()->json(['status' => 'error', 'message' => 'Already in Bookmark!'], 203);
+            }
             $bookmark = Bookmarks::create($data);
             return response()->json([
                 'status' => 'success',
                 'data' => $bookmark
             ],201);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e],500);
+        }
+    }
+
+    public function check(Request $request)
+    {
+        try{
+            $data = $request->validate([
+                'book_id' => 'required',
+                'user_id' => 'required'
+            ]);
+            $validate = Bookmarks::where('user_id',$data['user_id'])->where('book_id',$data['book_id'])->first();
+            if ($validate){
+                return response()->json(['status' => 'found', 'id' => $validate['id']], 200);
+            }
+            return response()->json(['status' => 'success'],203);
         } catch (Exception $e) {
             return response()->json(['status'=> 'error','message'=> $e],500);
         }
@@ -82,7 +106,7 @@ class BookmarksController extends Controller
     public function destroy($id)
     {
         try{
-            $data = Bookmarks::where('bookmark_id', $id)->delete();
+            $data = Bookmarks::where('id', $id)->delete();
             return response()->json([
                 'status' => 'success',
                 'data' => $data

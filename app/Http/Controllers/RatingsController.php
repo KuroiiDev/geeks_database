@@ -15,7 +15,7 @@ class RatingsController extends Controller
     {
         try {
             $data = Ratings::with(['user', 'book'])->orderBy('created_at', 'DESC')->get();
-            if (!$data) {
+            if ($data->count() <=0) {
                 return response()->json(['status' => 'not found'], 404);
             }
             return response()->json([
@@ -47,7 +47,6 @@ class RatingsController extends Controller
             $data = $request->validate([
                 'user_id' => 'required',
                 'book_id' => 'required',
-                'review' => 'required',
                 'rating' => 'required',
             ]);
             $rating = Ratings::create($data);

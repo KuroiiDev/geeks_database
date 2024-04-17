@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('book_id');
-            $table->text('review')->nullable();
             $table->integer('rating')->unsigned();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');

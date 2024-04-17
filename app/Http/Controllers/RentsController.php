@@ -17,7 +17,7 @@ class RentsController extends Controller
     public function index()
     {
         $data = Rents::orderBy('created_at', 'DESC')->get();
-        if (!$data) {
+        if ($data->count() <=0) {
             return response()->json(['status'=>'not found'],404);
         }
         return response()->json([
@@ -91,9 +91,9 @@ class RentsController extends Controller
 
                 return response()->json(['status'=> 'error','message'=> 'Book Unavailable!'],400);
 
-            } else if(Rents::where('user_id', $data['user_id'])->where('status', ['BOOKED', 'RENTED'])){
+            } else if(Rents::where('user_id', $data['user_id'])->where('status', ['BOOKED', 'RENTED'])->first()){
 
-                return response()->json(['status'=> 'error','message'=> 'User Can Only Rent 1 Book Each Time!'],400);
+                return response()->json(['status'=> 'error','message'=> 'User Can Only Rent 1 Book Each Time!'],203);
 
             }else {
                 $rent = Rents::create($data);

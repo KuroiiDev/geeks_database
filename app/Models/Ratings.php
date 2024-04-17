@@ -12,7 +12,6 @@ class Ratings extends Model
     protected $fillable = [
         'user_id',
         'book_id',
-        'review',
         'rating',
     ];
 
