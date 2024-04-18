@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Users;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -216,6 +217,36 @@ class UsersController extends Controller
                 'status'=> 'failed',
                 'message'=> $e->getMessage()
             ],500);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $data = $request->validate([
+                'name' => 'string',
+                'password' => 'string',
+                'profile' => 'nullable',
+            ]);
+            if ($request->hasFile('profile')) {
+                if($request->file('profile')->isValid()) {
+                    try {
+                        $file = $request->file('profile');
+                        $image = base64_encode(file_get_contents($file));
+                        $data['profile'] = $image;
+                    }catch (\Throwable $e) {
+                        return response()->json(['status'=> 'error Encoding','message'=> $e->getMessage()],500);
+                    }
+                }
+            }
+            Users::where('id', $id)->update($data);
+            $update = Users::where('id', $id)->first();
+            return response()->json([
+                'status' => 'success',
+                'data' => $update
+            ],200);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e],500);
         }
     }
     

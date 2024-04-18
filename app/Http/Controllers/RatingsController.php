@@ -50,9 +50,15 @@ class RatingsController extends Controller
                 'book_id' => 'required',
                 'rating' => 'required',
             ]);
-            if (Ratings::where('user_id',$data['user_id'])->where('book_id',$data['book_id'])->get()->count() >0){
-
-                return response()->json(['status'=> 'error','message'=> "Same user Can't rate the same book twice!"],400);
+            $check =  Ratings::where('user_id',$data['user_id'])->where('book_id',$data['book_id'])->first();
+            if ($check) {
+                $rating = Ratings::where('id', $check['id'])->update($data);
+                updateRating($data['book_id']);
+                $check =  Ratings::where('user_id',$data['user_id'])->where('book_id',$data['book_id'])->first();
+                return response()->json([
+                    'status' => 'success Updated',
+                    'data' => $check
+                ],201);
             }
             $rating = Ratings::create($data);
             updateRating($data['book_id']);
@@ -61,7 +67,7 @@ class RatingsController extends Controller
                 'data' => $rating
             ],201);
         } catch (Exception $e) {
-            return response()->json(['status'=> 'error','message'=> $e],500);
+            return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
         }
     }
 

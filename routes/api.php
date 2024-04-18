@@ -29,12 +29,14 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     $router->post('/login', [UsersController::class, 'login']);
     $router->post('/register', [UsersController::class, 'register']);
     $router->get('/id/{id}', [UsersController::class, 'userId']);
+    $router->post('/edit/{id}', [UsersController::class, 'update']);
 
     $router->group(['prefix' => 'book'], function () use ($router) {
         $router->get('/', [BooksController::class,'index']);
         $router->get('/id/{id}', [BooksController::class, 'byID']);
         $router->get('/az', [BooksController::class,'orderAtoZ']);
         $router->get('/top', [BooksController::class,'topRent']);
+        $router->get('/rating', [BooksController::class,'topRated']);
     });
 
     $router->group(['prefix' => 'rent'], function () use ($router) {
@@ -55,7 +57,7 @@ $router->group(['prefix' => 'user'], function () use ($router) {
 
     $router->group(['prefix' => 'rating'], function () use ($router) {
         $router->get('/', [RatingsController::class,'index']);
-        $router->post('/', [RatingsController::class,'store']);
+        $router->post('/add', [RatingsController::class,'store']);
         $router->get('/book/{id}', [RatingsController::class,'book']);
     });
 

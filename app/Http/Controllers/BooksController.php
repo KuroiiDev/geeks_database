@@ -51,6 +51,18 @@ class BooksController extends Controller
         ],200);
     }
 
+    public function topRated()
+    {
+        $data = Books::orderBy('rating', 'DESC')->get();
+        if (!$data) {
+            return response()->json(['status'=>'not found'],404);
+        }
+        return response()->json([
+            'status'=>'success',
+            'data'=> $data
+        ],200);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -114,7 +126,19 @@ class BooksController extends Controller
                 'publisher' => 'string',
                 'synopsis' => 'string',
                 'publish_year' => 'integer',
+                'cover' => 'nullable',
             ]);
+            if ($request->hasFile('cover')) {
+                if($request->file('cover')->isValid()) {
+                    try {
+                        $file = $request->file('cover');
+                        $image = base64_encode(file_get_contents($file));
+                        $data['cover'] = $image;
+                    }catch (\Throwable $e) {
+                        return response()->json(['status'=> 'error Encoding','message'=> $e->getMessage()],500);
+                    }
+                }
+            }
             Books::where('id', $id)->update($data);
             $update = Books::where('id', '=', $id)->first();
             return response()->json([
