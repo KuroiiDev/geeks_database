@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Books;
 use App\Models\Ratings;
 use Exception;
 use Illuminate\Http\Request;
@@ -49,7 +50,12 @@ class RatingsController extends Controller
                 'book_id' => 'required',
                 'rating' => 'required',
             ]);
+            if (Ratings::where('user_id',$data['user_id'])->where('book_id',$data['book_id'])->get()->count() >0){
+
+                return response()->json(['status'=> 'error','message'=> "Same user Can't rate the same book twice!"],400);
+            }
             $rating = Ratings::create($data);
+            updateRating($data['book_id']);
             return response()->json([
                 'status' => 'success',
                 'data' => $rating
@@ -62,12 +68,13 @@ class RatingsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function book($id)
     {
         try{
-            $data = Ratings::all()->find($id);
+            updateRating($id);
+            $data = Ratings::with(['user', 'book'])->where('book_id',$id)->get();
             if (!$data) {
-                return response()->json(['status' => 'not found'], 404);
+                return response()->json(['status' => 'not found'], 203);
             }
             return response()->json([
                 'status' => 'success',
@@ -81,9 +88,20 @@ class RatingsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Ratings $ratings)
+    public function rating($id)
     {
-        
+        try{
+            $data = Ratings::with(['user', 'book'])->where('id',$id)->get();
+            if (!$data) {
+                return response()->json(['status' => 'not found'], 203);
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e],500);
+        }
     }
 
     /**
@@ -100,5 +118,18 @@ class RatingsController extends Controller
     public function destroy(Ratings $ratings)
     {
         //
+    }
+}
+function updateRating($id)
+{
+    try
+    {
+        $count = Ratings::where('book_id', $id)->get()->count();
+        $total = Ratings::where('book_id', $id)->sum('rating');
+        $rating = $total / $count;
+        Books::where('id', $id)->update(['rating' => $rating]);
+        //print($rating);
+    } catch (Exception $e) {
+        //print($e);
     }
 }

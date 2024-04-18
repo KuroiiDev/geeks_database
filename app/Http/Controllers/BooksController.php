@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Books;
+use App\Models\Ratings;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,8 @@ class BooksController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    
     public function index()
     {
         $data = Books::orderBy('created_at', 'DESC')->get();
@@ -38,6 +41,7 @@ class BooksController extends Controller
     public function topRent()
     {
         $data = Books::orderBy('rented', 'DESC')->first();
+        updateRating($data['id']);
         if (!$data) {
             return response()->json(['status'=>'not found'],404);
         }
@@ -82,6 +86,7 @@ class BooksController extends Controller
     public function byID($id)
     {
         try {
+            updateRating($id);
             $data = Books::with([])->where('id', '=', $id)->first();
             if (!$data) {
                 return response()->json(['status'=>'id not found'],404);
@@ -121,3 +126,17 @@ class BooksController extends Controller
         }
     }
 }
+
+function updateRating($id)
+    {
+        try
+        {
+            $count = Ratings::where('book_id', $id)->get()->count();
+            $total = Ratings::where('book_id', $id)->sum('rating');
+            $rating = $total / $count;
+            Books::where('id', $id)->update(['rating' => $rating]);
+            //print($rating);
+        } catch (Exception $e) {
+            //print($e);
+        }
+    }

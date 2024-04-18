@@ -55,7 +55,11 @@ $router->group(['prefix' => 'user'], function () use ($router) {
 
     $router->group(['prefix' => 'rating'], function () use ($router) {
         $router->get('/', [RatingsController::class,'index']);
+        $router->post('/', [RatingsController::class,'store']);
+        $router->get('/book/{id}', [RatingsController::class,'book']);
     });
+
+    $router->get('/genre', [GenresController::class,'index']);
  
 });
 $router->group(['prefix' => 'staff'], function () use ($router) {
