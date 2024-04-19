@@ -45,7 +45,7 @@ class RentsController extends Controller
     public function current($id)
     {
         try {
-            $data = Rents::where('user_id', $id)->where('status', ['BOOKED', 'RENTED'])->with(['book','user'])->orderBy('created_at', 'DESC')->first();
+            $data = Rents::where('user_id', $id)->where('status', 'BOOKED')->orWhere('status', 'RENTED')->with(['book','user'])->orderBy('created_at', 'DESC')->first();
             if (!$data) {
             return response()->json(['status'=>'not found'],404);
             }

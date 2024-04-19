@@ -14,7 +14,19 @@ class GenresController extends Controller
     {
         $data = Genres::orderBy('genre', 'ASC')->get();
         if (!$data) {
-            return response()->json(['status'=>'not found'],404);
+            return response()->json(['status'=>'not found'],203);
+        }
+        return response()->json([
+            'status'=>'success',
+            'data'=> $data
+        ],200);
+    }
+
+    public function indexId()
+    {
+        $data = Genres::orderBy('id')->get();
+        if (!$data) {
+            return response()->json(['status'=>'not found'],203);
         }
         return response()->json([
             'status'=>'success',

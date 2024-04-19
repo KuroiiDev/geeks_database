@@ -80,11 +80,11 @@ $router->group(['prefix' => 'staff'], function () use ($router) {
         $router->post('/', [BooksController::class,'store']);
         $router->get('/id/{id}', [BooksController::class, 'byID']);
         $router->patch('/id/{id}', [BooksController::class, 'update']);
-        $router->get('/', [BooksController::class,'index']);
+        $router->get('/', [BooksController::class,'indexId']);
     });
 
     $router->group(['prefix' => 'genre'], function () use ($router) {
-        $router->get('/', [GenresController::class,'index']);
+        $router->get('/', [GenresController::class,'indexId']);
         $router->get('/relation', [GenresRelationController::class,'index']);
         $router->get('/book/{id}', [GenresRelationController::class,'book']);
         $router->get('/genre/{id}', [GenresRelationController::class,'genre']);
@@ -96,6 +96,8 @@ $router->group(['prefix' => 'staff'], function () use ($router) {
 
      $router->group(['prefix' => 'rent'], function () use ($router) {
         $router->get('/', [RentsController::class,'index']);
+        $router->get('/id/{id}', [RentsController::class,'byId']);
+        $router->get('/user/{id}', [RentsController::class,'byUser']);
         $router->get('/verify/{id}', [RentsController::class,'verifyRent']);
         $router->get('/return/{id}', [RentsController::class,'returnRent']);
      });

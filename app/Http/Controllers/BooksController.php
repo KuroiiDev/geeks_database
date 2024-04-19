@@ -18,7 +18,7 @@ class BooksController extends Controller
     {
         $data = Books::orderBy('created_at', 'DESC')->get();
         if (!$data) {
-            return response()->json(['status'=>'not found'],404);
+            return response()->json(['status'=>'not found'],203);
         }
         return response()->json([
             'status'=>'success',
@@ -26,11 +26,12 @@ class BooksController extends Controller
         ],200);
     }
 
+
     public function indexId()
     {
-        $data = Books::orderBy('id', 'DESC')->get();
+        $data = Books::orderBy('id')->get();
         if (!$data) {
-            return response()->json(['status'=>'not found'],404);
+            return response()->json(['status'=>'not found'],203);
         }
         return response()->json([
             'status'=>'success',
@@ -42,7 +43,7 @@ class BooksController extends Controller
     {
         $data = Books::orderBy('title', 'ASC')->get();
         if (!$data) {
-            return response()->json(['status'=>'not found'],404);
+            return response()->json(['status'=>'not found'],203);
         }
         return response()->json([
             'status'=>'success',

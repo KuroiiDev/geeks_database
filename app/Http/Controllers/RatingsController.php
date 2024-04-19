@@ -78,7 +78,7 @@ class RatingsController extends Controller
     {
         try{
             updateRating($id);
-            $data = Ratings::with(['user', 'book'])->where('book_id',$id)->get();
+            $data = Ratings::with(['user', 'book'])->where('book_id',$id)->orderBy('created_at', 'DESC')->get();
             if (!$data) {
                 return response()->json(['status' => 'not found'], 203);
             }
