@@ -26,6 +26,18 @@ class BooksController extends Controller
         ],200);
     }
 
+    public function indexId()
+    {
+        $data = Books::orderBy('id', 'DESC')->get();
+        if (!$data) {
+            return response()->json(['status'=>'not found'],404);
+        }
+        return response()->json([
+            'status'=>'success',
+            'data'=> $data
+        ],200);
+    }
+
     public function orderAtoZ()
     {
         $data = Books::orderBy('title', 'ASC')->get();
@@ -156,9 +168,11 @@ function updateRating($id)
         try
         {
             $count = Ratings::where('book_id', $id)->get()->count();
-            $total = Ratings::where('book_id', $id)->sum('rating');
-            $rating = $total / $count;
-            Books::where('id', $id)->update(['rating' => $rating]);
+            if ($count != 0){
+                $total = Ratings::where('book_id', $id)->sum('rating');
+                $rating = $total / $count;
+                Books::where('id', $id)->update(['rating' => $rating]);
+            }
             //print($rating);
         } catch (Exception $e) {
             //print($e);

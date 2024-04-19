@@ -131,8 +131,11 @@ function updateRating($id)
     try
     {
         $count = Ratings::where('book_id', $id)->get()->count();
-        $total = Ratings::where('book_id', $id)->sum('rating');
-        $rating = $total / $count;
+        if ($count != 0){
+            $total = Ratings::where('book_id', $id)->sum('rating');
+            $rating = $total / $count;
+            Books::where('id', $id)->update(['rating' => $rating]);
+        }
         Books::where('id', $id)->update(['rating' => $rating]);
         //print($rating);
     } catch (Exception $e) {

@@ -113,8 +113,8 @@ class UsersController extends Controller
                     'message' => 'User Not Found'
                 ],401);
             }
-
-            $isPasswordValid = Hash::check($data['password'], $user->password);
+            $data['password'] = Hash::make($data['password']);
+            $isPasswordValid = Hash::check($user->password, $data['password']);
             if (!$isPasswordValid) {
                 return response()->json([
                     'status' => 'failed',
@@ -243,8 +243,9 @@ class UsersController extends Controller
             $update = Users::where('id', $id)->first();
             return response()->json([
                 'status' => 'success',
-                'data' => $update
-            ],200);
+                'data' => $update,
+                'pass' => $update['password']
+            ],201);
         } catch (Exception $e) {
             return response()->json(['status'=> 'error','message'=> $e],500);
         }
