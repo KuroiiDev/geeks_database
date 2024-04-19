@@ -3,6 +3,7 @@
 use App\Http\Controllers\BookmarksController;
 use App\Http\Controllers\BooksController;
 use App\Http\Controllers\GenresController;
+use App\Http\Controllers\GenresRelationController;
 use App\Http\Controllers\RatingsController;
 use App\Http\Controllers\RentsController;
 use App\Http\Controllers\UsersController;
@@ -56,11 +57,15 @@ $router->group(['prefix' => 'user'], function () use ($router) {
 
     $router->group(['prefix' => 'rating'], function () use ($router) {
         $router->get('/', [RatingsController::class,'index']);
-        $router->post('/add', [RatingsController::class,'store']);
+        $router->post('/', [RatingsController::class,'store']);
         $router->get('/book/{id}', [RatingsController::class,'book']);
     });
 
-    $router->get('/genre', [GenresController::class,'index']);
+    $router->group(['prefix' => 'genre'], function () use ($router) {
+        $router->get('/', [GenresController::class,'index']);
+        $router->get('/book/{id}', [GenresRelationController::class,'book']);
+        $router->get('/genre/{id}', [GenresRelationController::class,'genre']);
+    });
  
 });
 $router->group(['prefix' => 'staff'], function () use ($router) {
@@ -73,14 +78,19 @@ $router->group(['prefix' => 'staff'], function () use ($router) {
 
     $router->group(['prefix' => 'book'], function () use ($router) {
         $router->post('/', [BooksController::class,'store']);
-        $router->get('/id/{id}', [BooksController::class, 'getByID']);
+        $router->get('/id/{id}', [BooksController::class, 'byID']);
         $router->patch('/id/{id}', [BooksController::class, 'update']);
         $router->get('/', [BooksController::class,'index']);
     });
 
     $router->group(['prefix' => 'genre'], function () use ($router) {
         $router->get('/', [GenresController::class,'index']);
+        $router->get('/relation', [GenresRelationController::class,'index']);
+        $router->get('/book/{id}', [GenresRelationController::class,'book']);
+        $router->get('/genre/{id}', [GenresRelationController::class,'genre']);
+
         $router->post('/', [GenresController::class,'store']);
+        $router->post('/link', [GenresRelationController::class,'store']);
     });
      
 
