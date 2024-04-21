@@ -16,7 +16,7 @@ class RentsController extends Controller
      */
     public function index()
     {
-        $data = Rents::orderBy('created_at', 'DESC')->get();
+        $data = Rents::with(['user','book'])->orderBy('created_at', 'DESC')->get();
         if ($data->count() <=0) {
             return response()->json(['status'=>'not found'],404);
         }
@@ -29,6 +29,7 @@ class RentsController extends Controller
     public function byId($id)
     {
         try {
+            
             $data = Rents::where('id', $id)->with(['book','user'])->first();
             if (!$data) {
             return response()->json(['status'=>'not found'],404);

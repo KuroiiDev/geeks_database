@@ -116,8 +116,7 @@ class UsersController extends Controller
                     'message' => 'User Not Found'
                 ],401);
             }
-            $data['password'] = Hash::make($data['password']);
-            $isPasswordValid = Hash::check($user->password, $data['password']);
+            $isPasswordValid = Hash::check($data['password'], $user->password);
             if (!$isPasswordValid) {
                 return response()->json([
                     'status' => 'failed',

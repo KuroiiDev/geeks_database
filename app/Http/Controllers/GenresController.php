@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Genres;
+use App\Models\Genres_Relation;
+use Exception;
 use Illuminate\Http\Request;
 
 class GenresController extends Controller
@@ -75,8 +77,17 @@ class GenresController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Genres $genres)
+    public function destroy($id)
     {
-        //
+        try{
+            Genres_Relation::where('genre_id',$id)->delete();
+            $data = Genres::where('id', $id)->delete();
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ],200);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e],500);
+        }
     }
 }

@@ -46,6 +46,23 @@ class GenresRelationController extends Controller
         }
     }
 
+    public function bookEx($id)
+    {
+        try {
+            $data = Genres_Relation::where('book_id','!=',$id)->with('genre')->get();
+            if ($data->count() <=0) {
+                return response()->json(['status' => 'not found'], 203);
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ],200);
+        } catch (Exception $e) {
+            return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
+        }
+    }
+
+
     public function genre($id)
     {
         try {
@@ -116,13 +133,18 @@ class GenresRelationController extends Controller
     public function destroy($id)
     {
         try{
-            $data = Genres_Relation::where('id', $id)->delete();
+
+            $data = Genres_Relation::where('id', $id)->first();
+            if (!$data){
+                return response()->json(['status'=> 'error','message'=> 'Not Found'],203);
+            }
+            Genres_Relation::where('id', $id)->delete();
             return response()->json([
                 'status' => 'success',
                 'data' => $data
             ],200);
         } catch (Exception $e) {
-            return response()->json(['status'=> 'error','message'=> $e],500);
+            return response()->json(['status'=> 'error','message'=> $e->getMessage()],500);
         }
     }
 }
