@@ -232,11 +232,18 @@ class UsersController extends Controller
             $data = $request->validate([
                 'name' => 'string',
                 'password' => 'string',
-                'profile' => 'string',
+                'profile' => 'nullable',
             ]);
-            if ($data['profile'] == 'NONE') {
-                $prof = Users::where('id', $id)->first();
-                $data['profile'] == $prof['profile'];
+            if ($request->hasFile('profile')) {
+                if($request->file('profile')->isValid()) {
+                    try {
+                        $file = $request->file('profile');
+                        $image = base64_encode(file_get_contents($file));
+                        $data['profile'] = $image;
+                    }catch (\Throwable $e) {
+                        return response()->json(['status'=> 'error Encoding','message'=> $e->getMessage()],500);
+                    }
+                }
             }
             Users::where('id', $id)->update($data);
             $update = Users::where('id', $id)->first();
