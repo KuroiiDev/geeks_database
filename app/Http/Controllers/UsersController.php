@@ -250,7 +250,6 @@ class UsersController extends Controller
             return response()->json([
                 'status' => 'success',
                 'data' => $update,
-                'pass' => $update['password']
             ],201);
         } catch (Exception $e) {
             return response()->json(['status'=> 'error','message'=> $e],500);
