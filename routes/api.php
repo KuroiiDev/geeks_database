@@ -82,7 +82,7 @@ $router->group(['prefix' => 'staff'], function () use ($router) {
         $router->post('/id/{id}', [BooksController::class, 'update']);
         $router->get('/', [BooksController::class,'indexId']);
 
-        
+        $router->post('/add', [BooksController::class, 'store']);
         $router->get('/remove/{id}', [BooksController::class,'destroy']);
     });
 
